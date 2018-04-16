@@ -36,6 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="200dp"
-        android:text="Login" />
+        android:text="Login"
+        android:onClick="login"/>
 
 </RelativeLayout>
