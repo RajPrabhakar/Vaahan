@@ -1,8 +1,6 @@
 package com.example.vaahan.vaahan;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -23,7 +21,7 @@ public class PassengerLoginFragment extends Fragment {
         passengerLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getActivity(), MapsActivity.class);
+                Intent i = new Intent(getActivity(), PassengerMapsActivity.class);
                 startActivity(i);
             }
         });

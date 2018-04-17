@@ -1,14 +1,12 @@
 package com.example.vaahan.vaahan;
 
 import android.Manifest;
-import android.content.pm.ActivityInfo;
+import android.content.Intent;
 import android.graphics.Color;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.test.mock.MockPackageManager;
 import android.util.Log;
-import android.widget.EditText;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,15 +28,14 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
+public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    private static final String TAG = MapsActivity.class.getSimpleName();
     private GoogleMap mMap;
+    TextView otp, distValue, fareValue;
+    Boolean otp_confirm = false;
     private List<LatLng> latLngList;
-    private TextView distanceValue;
-    private TextView durationValue, fareValue;
-    private EditText from, to;
     GPSTracker gps;
+    private static final String TAG = PassengerMapsActivity.class.getSimpleName();
 
     private static final int REQUEST_CODE_PERMISSION = 2;
     String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -46,25 +43,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-        try {
-            if (ActivityCompat.checkSelfPermission(this, mPermission) != MockPackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{mPermission}, REQUEST_CODE_PERMISSION);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        setContentView(R.layout.activity_driver_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        distanceValue = (TextView)findViewById(R.id.dist);
-        durationValue = (TextView)findViewById(R.id.time);
-        fareValue = findViewById(R.id.fare);
-        from = findViewById(R.id.from);
-        to = findViewById(R.id.to);
-        latLngList = new ArrayList<LatLng>();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        otp = findViewById(R.id.otp);
+        distValue = findViewById(R.id.dist);
+        fareValue = findViewById(R.id.fare);
+        latLngList = new ArrayList<LatLng>();
     }
 
 
@@ -80,8 +68,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setOnMapClickListener(MapsActivity.this);
-        gps = new GPSTracker(MapsActivity.this);
+        gps = new GPSTracker(DriverMapsActivity.this);
         if (gps.canGetLocation()) {
             double latitude = gps.getLatitude();
             double longitude = gps.getLongitude();
@@ -99,14 +86,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
-    @Override
     public void onMapClick(LatLng latLng) {
         if(latLngList.size() > 1){
             refreshMap(mMap);
             latLngList.remove(1);
             //latLngList.clear();
-            distanceValue.setText("");
-            durationValue.setText("");
+            distValue.setText("");
         }
         latLngList.add(latLng);
         Log.d(TAG, "Marker number " + latLngList.size());
@@ -164,7 +149,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         List<LatLng> mDirections = getDirectionPolylines(response.getRoutes());
                         drawRouteOnMap(mMap, mDirections);
                     }else{
-                        Toast.makeText(MapsActivity.this, R.string.server_error, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DriverMapsActivity.this, R.string.server_error, Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -173,11 +158,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
     }
     private void setRouteDistanceAndDuration(String distance, String duration, String fare, String start, String end){
-        distanceValue.setText(distance);
-        durationValue.setText(duration);
+        distValue.setText(distance);
         fareValue.setText(fare);
-        from.setText(start);
-        to.setText(end);
     }
     private List<LatLng> getDirectionPolylines(List<RouteObject> routes){
         List<LatLng> directionList = new ArrayList<LatLng>();
@@ -252,8 +234,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return poly;
     }
 
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
+    public void confirm(View v) {
+        otp_confirm = true;
+    }
 
+    public void end(View v) {
+        Intent i = new Intent(this, ActualActivity.class);
+        startActivity(i);
     }
 }
