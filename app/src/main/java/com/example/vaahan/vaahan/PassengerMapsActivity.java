@@ -95,8 +95,7 @@ public class PassengerMapsActivity extends FragmentActivity implements OnMapRead
             LatLng here = new LatLng(latitude, longitude);
             onMapClick(here);
             //latLngList.add(here);
-
-            Toast.makeText(getApplicationContext(), "Your location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "Your location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
         } else {
             gps.showSettingsAlert();
         }
@@ -194,8 +193,9 @@ public class PassengerMapsActivity extends FragmentActivity implements OnMapRead
                 Log.d(TAG, "getDirectionPolylines: " + leg.getDistance().toString());
                 String routeDistance = leg.getDistance().getText();
                 String routeDuration = leg.getDuration().getText();
-                int fare = leg.getDistance().getValue();
-                fare = (((fare - 1800) * 18) / 1000) + 25;
+                int distInMeter = leg.getDistance().getValue();
+                int init_fare = Math.round(((distInMeter - 1800) * 18) / 1000);
+                int fare = init_fare < 0 ? 25 : init_fare + 25;
                 String routeFare = "Rs. " + fare;
                 String startAddress = leg.getStartAddress();
                 String endAddress = leg.getEndAddress();

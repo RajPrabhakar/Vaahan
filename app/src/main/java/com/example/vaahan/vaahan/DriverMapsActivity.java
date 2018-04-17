@@ -75,8 +75,7 @@ public class DriverMapsActivity extends FragmentActivity implements OnMapReadyCa
             LatLng here = new LatLng(latitude, longitude);
             onMapClick(here);
             //latLngList.add(here);
-
-            Toast.makeText(getApplicationContext(), "Your location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "Your location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
         } else {
             gps.showSettingsAlert();
         }
